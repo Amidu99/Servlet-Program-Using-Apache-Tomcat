@@ -9,7 +9,11 @@ public class HelloParameter1 extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // parameter catch
         String name = req.getParameter("name");
+        // create writer
+        var writer = resp.getWriter();
+        resp.setContentType("text/html");
         // parameter use
         System.out.println("Hello "+name+"!");
+        writer.println("Hello "+name+"!");
     }
 }
