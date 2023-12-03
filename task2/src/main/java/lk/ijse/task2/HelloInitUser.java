@@ -9,7 +9,7 @@ import java.io.IOException;
 public class HelloInitUser extends HttpServlet {
     @Override
     public void init() throws ServletException {
-        System.out.println("init the HelloInitUser Object");
+        System.out.println("Init the HelloInitUser Object");
     }
 
     @Override
