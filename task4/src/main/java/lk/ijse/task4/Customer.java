@@ -27,6 +27,7 @@ public class Customer extends HttpServlet {
     private static final String GET_DATA = "SELECT * FROM customer";
     private static final String GET_S_DATA = "SELECT * FROM customer WHERE Name = ?";
     private static final String UPDATE_DATA = "UPDATE customer SET Address = ?, Mobile = ? WHERE Name = ?";
+    private static final String DELETE_DATA = "DELETE FROM customer WHERE Name = ?";
     @Override
     public void init() throws ServletException {
         try {
@@ -159,6 +160,35 @@ public class Customer extends HttpServlet {
             }else{
                 System.out.println("Customer Not Updated!");
                 writer.println("DATA Not Updated!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if(req.getParameter("name")==null){
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST); // The error what u want to send
+        }
+        System.out.println("Start deleting..");
+
+        // parameter catch
+        var name = req.getParameter("name");
+
+        var writer = resp.getWriter();
+        resp.setContentType("text/html");
+
+        // delete data
+        try{
+            var ps = connection.prepareStatement(DELETE_DATA);
+            ps.setString(1,name);
+            if(ps.executeUpdate()!=0){
+                System.out.println("Customer Deleted!");
+                writer.println("DATA Deleted!");
+            }else{
+                System.out.println("Customer Not Deleted!");
+                writer.println("DATA Not Deleted!");
             }
         } catch (SQLException e) {
             e.printStackTrace();
