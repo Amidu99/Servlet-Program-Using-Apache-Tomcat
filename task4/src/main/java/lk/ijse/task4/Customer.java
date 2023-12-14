@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @WebServlet(name = "customer", urlPatterns = "/customer",
@@ -23,6 +24,7 @@ import java.sql.SQLException;
 public class Customer extends HttpServlet {
     Connection connection;
     private static final String SAVE_DATA = "INSERT INTO customer (Name, Address, Mobile) VALUES ( ?,?,? )";
+    private static final String GET_DATA = "SELECT * FROM customer";
     @Override
     public void init() throws ServletException {
         try {
@@ -41,7 +43,7 @@ public class Customer extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("Start saving..");
         // parameter catch
         var name = req.getParameter("name");
@@ -64,6 +66,30 @@ public class Customer extends HttpServlet {
             }else{
                 System.out.println("Customer Not Saved!");
                 writer.println("DATA Not Saved!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // doGet without parameter
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("Start retrieving..");
+
+        // create writer
+        var writer = resp.getWriter();
+        resp.setContentType("text/html");
+
+        // get data
+        try{
+            ResultSet resultSet = connection.createStatement().executeQuery(GET_DATA);
+            while(resultSet.next()){
+                String name = resultSet.getString(1);
+                String address = resultSet.getString(2);
+                String mobile = resultSet.getString(3);
+                System.out.println("Name = "+name+" | Address = "+address+" | Mobile = "+mobile);
+                writer.println("Name = "+name+" | Address = "+address+" | Mobile = "+mobile);
             }
         } catch (SQLException e) {
             e.printStackTrace();
