@@ -26,6 +26,7 @@ public class Customer extends HttpServlet {
     private static final String SAVE_DATA = "INSERT INTO customer (Name, Address, Mobile) VALUES ( ?,?,? )";
     private static final String GET_DATA = "SELECT * FROM customer";
     private static final String GET_S_DATA = "SELECT * FROM customer WHERE Name = ?";
+    private static final String UPDATE_DATA = "UPDATE customer SET Address = ?, Mobile = ? WHERE Name = ?";
     @Override
     public void init() throws ServletException {
         try {
@@ -125,6 +126,39 @@ public class Customer extends HttpServlet {
             }else{
                 System.out.println("Not Retrieved!");
                 writer.println("DATA Not Retrieved!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if(req.getParameter("name")==null){
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST); // The error what u want to send
+        }
+        System.out.println("Start updating..");
+
+        // parameter catch
+        var name = req.getParameter("name");
+        var address = req.getParameter("address");
+        var mobile = req.getParameter("mobile");
+
+        var writer = resp.getWriter();
+        resp.setContentType("text/html");
+
+        // update data
+        try{
+            var ps = connection.prepareStatement(UPDATE_DATA);
+            ps.setString(1,address);
+            ps.setString(2,mobile);
+            ps.setString(3,name);
+            if(ps.executeUpdate()!=0){
+                System.out.println("Customer Updated!");
+                writer.println("DATA Updated!");
+            }else{
+                System.out.println("Customer Not Updated!");
+                writer.println("DATA Not Updated!");
             }
         } catch (SQLException e) {
             e.printStackTrace();
