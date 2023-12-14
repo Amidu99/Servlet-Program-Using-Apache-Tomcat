@@ -25,6 +25,7 @@ public class Customer extends HttpServlet {
     Connection connection;
     private static final String SAVE_DATA = "INSERT INTO customer (Name, Address, Mobile) VALUES ( ?,?,? )";
     private static final String GET_DATA = "SELECT * FROM customer";
+    private static final String GET_S_DATA = "SELECT * FROM customer WHERE Name = ?";
     @Override
     public void init() throws ServletException {
         try {
@@ -73,7 +74,7 @@ public class Customer extends HttpServlet {
     }
 
     // doGet without parameter
-    @Override
+    /*@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("Start retrieving..");
 
@@ -90,6 +91,40 @@ public class Customer extends HttpServlet {
                 String mobile = resultSet.getString(3);
                 System.out.println("Name = "+name+" | Address = "+address+" | Mobile = "+mobile);
                 writer.println("Name = "+name+" | Address = "+address+" | Mobile = "+mobile);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }*/
+
+    // doGet with parameter
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if(req.getParameter("name")==null){
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST); // The error what u want to send
+        }
+        System.out.println("Start retrieving..");
+
+        // parameter catch
+        var Name = req.getParameter("name");
+
+        var writer = resp.getWriter();
+        resp.setContentType("text/html");
+
+        // get data
+        try{
+            var ps = connection.prepareStatement(GET_S_DATA);
+            ps.setString(1,Name);
+            var resultSet = ps.executeQuery();
+            if(resultSet.next()){
+                String name = resultSet.getString(1);
+                String address = resultSet.getString(2);
+                String mobile = resultSet.getString(3);
+                System.out.println("Name = "+name+" | Address = "+address+" | Mobile = "+mobile);
+                writer.println("Name = "+name+" | Address = "+address+" | Mobile = "+mobile);
+            }else{
+                System.out.println("Not Retrieved!");
+                writer.println("DATA Not Retrieved!");
             }
         } catch (SQLException e) {
             e.printStackTrace();
