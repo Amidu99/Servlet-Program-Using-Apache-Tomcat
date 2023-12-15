@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 
 @WebServlet(name="jsonProcess", urlPatterns = "/jsonp")
@@ -18,11 +19,14 @@ public class JSON_P extends HttpServlet {
         if(req.getContentType()==null || !req.getContentType().toLowerCase().startsWith("application/json")) {
             resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
         }
-//        BufferedReader reader = req.getReader();
-//        StringBuilder sb = new StringBuilder();
-//        reader.lines().forEach(line-> sb.append(line+"\n"));
-//        System.out.println(sb);
 
+        // using BufferedReader
+        BufferedReader b_reader = req.getReader();
+        StringBuilder sb = new StringBuilder();
+        b_reader.lines().forEach(line-> sb.append(line+"\n"));
+        System.out.println(sb);
+
+        // using JsonReader
         JsonReader reader = Json.createReader(req.getReader());
         JsonObject jsonObject = reader.readObject();
 
@@ -35,9 +39,9 @@ public class JSON_P extends HttpServlet {
         JsonArray jsonValues = reader.readArray();
         for (int i=0; i<jsonValues.size(); i++){
             JsonObject jsonObject1 = jsonValues.getJsonObject(i);
-            System.out.println("Name: "+jsonObject.getString("name"));
-            System.out.println("City: "+jsonObject.getString("city"));
-            System.out.println("Email: "+jsonObject.getString("email"));
+            System.out.println("Name: "+jsonObject1.getString("name"));
+            System.out.println("City: "+jsonObject1.getString("city"));
+            System.out.println("Email: "+jsonObject1.getString("email"));
         }
     }
 }
